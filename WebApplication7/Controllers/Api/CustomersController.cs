@@ -24,26 +24,26 @@ namespace WebApplication7.Controllers.Api
         }
 
         // GET api/customers/1
-        public Customer GetCustomer (int id)
+        public IHttpActionResult GetCustomer (int id)
         {
             var customer = _context.Customers.SingleOrDefault(c => c.Id == id);
             if (customer == null)
-                throw new HttpResponseException(HttpStatusCode.NotFound);
+                return NotFound();
 
-            return customer ;
+            return Ok(customer) ;
         }
 
         // POST api/customer
         [HttpPost]
-        public Customer CreateCustomer (Customer customer)
+        // it was returning a customer object
+        public IHttpActionResult CreateCustomer (Customer customer)
         {
             if (!ModelState.IsValid)
-                throw new HttpResponseException(HttpStatusCode.BadRequest);
-
+                return BadRequest();
             _context.Customers.Add(customer);
             _context.SaveChanges();
 
-            return customer;
+            return Created(new Uri(Request.RequestUri + "/" + customer.Id ) , customer);
         }
         
         // PUT api/customer/1
